@@ -1,6 +1,7 @@
 import express from "express"
 import { Game } from "./controllers/game.js"
 import { LOCAL_PORT } from "./globals.js"
+import { getGame } from "./services/getGame.js"
 import { getGameCode } from "./services/getGameCode.js"
 
 const GAMES = []
@@ -22,11 +23,13 @@ app.post("/game/:gameCode/delete", (req, res) => {
 	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
 	if (invalidGameCode) {
 		res.status(status).send(invalidGameCodeMessage)
+		return
 	}
 
-	const gameIndex = GAMES.findIndex(game => game.gameCode == gameCode)
-	if (gameIndex < 0) {
-		res.status(404).send(`Game not found. Probably incorrect game code sent - ${gameCode}`)
+	const { gameIndex, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
 	}
 
 	const deletedGame = GAMES.splice(gameIndex, 1);
@@ -34,9 +37,16 @@ app.post("/game/:gameCode/delete", (req, res) => {
 })
 
 app.post("/game/:gameCode/questions", (req, res) => {
-	const {gameCode} = req.params;
-	if (!gameCode) {
-		res.status(404).send(`Game Id (${gameCode}) not found`)
+	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
+	if (invalidGameCode) {
+		res.status(status).send(invalidGameCodeMessage)
+		return
+	}
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
 	}
 })
 
