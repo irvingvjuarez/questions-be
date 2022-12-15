@@ -7,6 +7,8 @@ import { getGameCode } from "./services/getGameCode.js"
 const GAMES = []
 const app = express()
 
+app.use(express.json())
+
 app.post("/game/create", (_req, res) => {
 	try {
 		const game = new Game()
@@ -37,9 +39,11 @@ app.post("/game/:gameCode/delete", (req, res) => {
 })
 
 app.post("/game/:gameCode/questions", (req, res) => {
+	const { body } = req
 	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
-	if (invalidGameCode) {
-		res.status(status).send(invalidGameCodeMessage)
+	if (invalidGameCode || !body) {
+		const currentErrorMessage = body ? invalidGameCodeMessage : "Body not sent in the request"
+		res.status(status).send(currentErrorMessage)
 		return
 	}
 
@@ -48,6 +52,9 @@ app.post("/game/:gameCode/questions", (req, res) => {
 		res.status(gameStatus).send(gameMessage)
 		return
 	}
+
+	game.addQuestions(body.questions)
+	res.status(200).send({ game })
 })
 
 app.listen(LOCAL_PORT, () => {

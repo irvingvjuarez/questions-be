@@ -6,4 +6,8 @@ export class Game {
 	getCode () {
 		return this.gameCode;
 	}
+
+	addQuestions (questions) {
+		this.questions = [...questions]
+	}
 }
