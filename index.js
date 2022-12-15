@@ -57,6 +57,28 @@ app.post("/game/:gameCode/questions", (req, res) => {
 	res.status(200).send({ game })
 })
 
+app.post("/game/:gameCode/start", (req, res) => {
+	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
+	if (invalidGameCode) {
+		res.status(status).send(invalidGameCodeMessage)
+		return
+	}
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	if (!game.questions) {
+		res.status(500).send("No questions added. Game cannot start")
+		return
+	}
+
+	game.toggleStart();
+	res.status(200).send({ game })
+})
+
 app.listen(LOCAL_PORT, () => {
 	console.log(`Listening at http://localhost:${LOCAL_PORT}`)
 })
