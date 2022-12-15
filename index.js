@@ -3,11 +3,14 @@ import { Game } from "./controllers/game.js"
 import { LOCAL_PORT } from "./globals.js"
 import { getGame } from "./services/getGame.js"
 import { getGameCode } from "./services/getGameCode.js"
+import { getRequestParam } from "./services/getRequestParam.js"
 
 const GAMES = []
 const app = express()
 
 app.use(express.json())
+
+// GAME POST endpoints
 
 app.post("/game/create", (_req, res) => {
 	try {
@@ -22,11 +25,8 @@ app.post("/game/create", (_req, res) => {
 })
 
 app.post("/game/:gameCode/delete", (req, res) => {
-	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
-	if (invalidGameCode) {
-		res.status(status).send(invalidGameCodeMessage)
-		return
-	}
+	const {param: gameCode, isParamMissing} = getRequestParam(req.params.gameCode, res, "No game code Provided");
+	if (isParamMissing) return
 
 	const { gameIndex, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
 	if (gameNotFound) {
@@ -78,6 +78,9 @@ app.post("/game/:gameCode/start", (req, res) => {
 	game.toggleStart();
 	res.status(200).send({ game })
 })
+
+// USER POST endpoints
+app.post("/user/:gameCode/join")
 
 app.listen(LOCAL_PORT, () => {
 	console.log(`Listening at http://localhost:${LOCAL_PORT}`)
