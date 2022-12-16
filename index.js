@@ -10,8 +10,9 @@ const app = express()
 
 app.use(express.json())
 
-// GAME POST endpoints
 
+
+// GAME POST endpoints
 app.post("/game/create", (_req, res) => {
 	try {
 		const game = new Game()
@@ -72,6 +73,8 @@ app.post("/game/:gameCode/start", (req, res) => {
 	res.status(200).send({ game })
 })
 
+
+
 // USER POST endpoints
 app.post("/user/:gameCode/join", (req, res) => {
 	const { param: nickname, isParamMissing: isNicknameMissing } = getRequestParam(req.body.nickname, res, "Nickname not sent in the body request")
@@ -125,6 +128,22 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 	user.answerQuestion(answer)
 
 	res.status(200).send({ answeredQuestion })
+})
+
+
+
+// GAME Get endpoints
+app.get("/game/:gameCode", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	res.status(200).send({ game })
 })
 
 app.listen(LOCAL_PORT, () => {
