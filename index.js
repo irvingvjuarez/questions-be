@@ -77,10 +77,10 @@ app.post("/user/:gameCode/join", (req, res) => {
 	const { param: nickname, isParamMissing: isNicknameMissing } = getRequestParam(req.body.nickname, res, "Nickname not sent in the body request")
 	if (isNicknameMissing) return
 
-	const user = new User(nickname)
-
 	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
 	if (isGameCodeMissing) return
+
+	const user = new User(nickname, gameCode)
 
 	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
 	if (gameNotFound) {
@@ -96,6 +96,35 @@ app.post("/user/:gameCode/join", (req, res) => {
 	const gameUsers = game.users
 
 	res.status(200).send({ gameQuestions, gameUsers })
+})
+
+app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { param: nickname, isParamMissing: nicknameMissing } = getRequestParam(req.params.userNickname, res, "No nickname Provided")
+	if (nicknameMissing) return
+
+	const { param: answer, isParamMissing: answerMissing } = getRequestParam(req.body.answer, res, "Answer not sent in the body request")
+	if (answerMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const user = game.users.find(user => user.nickname == nickname)
+	if (!user) {
+		res.status(404).send(`User ${nickname} Not Found in game ${gameCode}`)
+		return
+	}
+
+	const answeredQuestion = game.questions.find(question => question.id == answer.questionId)
+
+	user.answerQuestion(answer)
+
+	res.status(200).send({ answeredQuestion })
 })
 
 app.listen(LOCAL_PORT, () => {
