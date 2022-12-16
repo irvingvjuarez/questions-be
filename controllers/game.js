@@ -28,10 +28,11 @@ export class Game {
 	}
 
 	startQuestionCounter() {
-		this.status.currentQuestion = this.questions.splice(0, 1);
+		const splicedQuestion = this.questions.splice(0, 1)
+		this.status.currentQuestion = splicedQuestion[0];
 
 		if (!this.status.currentQuestion) {
-			this.gameOver()
+			this.gameOver = true
 		} else {
 			this.status.counterActive = true
 			setTimeout(() => {
@@ -47,7 +48,6 @@ export class Game {
 		this.answeredQuestions.push(this.status.currentQuestion)
 		this.status.currentQuestion = null
 
-		// console.log(this.status)
 	}
 
 	gameOver () {

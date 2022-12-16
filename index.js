@@ -74,13 +74,19 @@ app.post("/game/:gameCode/start", (req, res) => {
 	res.status(200).send({ game })
 })
 
-app.post("/game/:gameId/next/question/start", (req, res) => {
+app.post("/game/:gameCode/next/question/start", (req, res) => {
 	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
 	if (isGameCodeMissing) return
 
 	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
 	if (gameNotFound) {
 		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const currentQuestionInProgress = game.status.counterActive
+	if (currentQuestionInProgress) {
+		res.send("Current question is still in progress")
 		return
 	}
 
