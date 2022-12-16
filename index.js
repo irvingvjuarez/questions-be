@@ -53,6 +53,11 @@ app.post("/game/:gameCode/questions", (req, res) => {
 		return
 	}
 
+	if (game.questions) {
+		res.status(303).send("Questions already added in the game")
+		return
+	}
+
 	game.addQuestions(questions)
 	res.status(200).send({ game })
 })
