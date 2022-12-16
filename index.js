@@ -105,13 +105,20 @@ app.post("/user/:gameCode/join", (req, res) => {
 	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
 	if (isGameCodeMissing) return
 
-	const user = new User(nickname, gameCode)
-
 	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
 	if (gameNotFound) {
 		res.status(gameStatus).send(gameMessage)
 		return
 	}
+
+	const userIndex = game.users.findIndex(user => user.nickname == nickname);
+
+	if (userIndex >= 0) {
+		res.status(303).send(`User with nickname ${nickname} already exists`)
+		return
+	}
+
+	const user = new User(nickname, gameCode)
 
 	game.addUser(user)
 	const gameQuestions = game.questions
