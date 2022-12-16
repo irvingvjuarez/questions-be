@@ -20,4 +20,15 @@ export class Game {
 	addUser (user) {
 		this.users.push(user)
 	}
+
+	answerQuestion (questionId, userNickname) {
+		const question = this.questions.find(question => question.id == questionId)
+		question.answeredBy.push(userNickname)
+
+		if (question.answeredBy.length === this.users.length) {
+			question.resolved = true
+		}
+
+		return question
+	}
 }

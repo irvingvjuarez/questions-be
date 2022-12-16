@@ -123,8 +123,7 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 		return
 	}
 
-	const answeredQuestion = game.questions.find(question => question.id == answer.questionId)
-
+	const answeredQuestion = game.answerQuestion(answer.questionId, nickname)
 	user.answerQuestion(answer)
 
 	res.status(200).send({ answeredQuestion })
