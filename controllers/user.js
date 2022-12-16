@@ -7,7 +7,7 @@ export class User {
 		}
 	}
 
-	answerQuestion (answer) {
+	answerCurrentQuestion (answer) {
 		this.gameHistorial.answers.push(answer)
 	}
 }

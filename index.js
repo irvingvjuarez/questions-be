@@ -2,6 +2,7 @@ import express from "express"
 import { Game } from "./controllers/game.js"
 import { User } from "./controllers/user.js"
 import { LOCAL_PORT } from "./globals.js"
+import { answerCurrentQuestion } from "./services/answerCurrentQuestion.js"
 import { getGame } from "./services/getGame.js"
 import { getRequestParam } from "./services/getRequestParam.js"
 
@@ -69,7 +70,7 @@ app.post("/game/:gameCode/start", (req, res) => {
 	const { isParamMissing: questionsMissing } = getRequestParam(game.questions, res, "No questions added. Game cannot start", 500)
 	if (questionsMissing) return
 
-	game.toggleStart();
+	game.startGame();
 	res.status(200).send({ game })
 })
 
@@ -123,8 +124,7 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 		return
 	}
 
-	const answeredQuestion = game.answerQuestion(answer.questionId, nickname)
-	user.answerQuestion(answer)
+	const answeredQuestion = answerCurrentQuestion({game, nickname, user, answer})
 
 	res.status(200).send({ answeredQuestion })
 })

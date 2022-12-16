@@ -1,8 +1,15 @@
+import { TIME_TO_ANSWER } from "../globals";
+
 export class Game {
 	constructor () {
 		this.gameCode = Math.floor(Math.random() * 10000)
 		this.started = false;
+		this.gameOver = false;
 		this.users = []
+		this.gameStatus = {
+			currentQuestion: null,
+			counterActive: true
+		}
 	}
 
 	getCode () {
@@ -13,22 +20,44 @@ export class Game {
 		this.questions = [...questions]
 	}
 
-	toggleStart () {
-		this.started = !this.started
+	startGame () {
+		this.started = true
+
+		this.startQuestionCounter()
+	}
+
+	startQuestionCounter() {
+		this.gameStatus.currentQuestion = this.questions.splice(0, 1);
+
+		if (!this.gameStatus.currentQuestion) {
+			this.gameOver()
+		} else {
+			setTimeout(() => {
+				this.finishCurrentQuestion()
+			}, TIME_TO_ANSWER)
+		}
+	}
+
+	finishCurrentQuestion () {
+		this.gameStatus.counterActive = false;
+	}
+
+	gameOver () {
+		this.gameOver = true;
 	}
 
 	addUser (user) {
 		this.users.push(user)
 	}
 
-	answerQuestion (questionId, userNickname) {
-		const question = this.questions.find(question => question.id == questionId)
-		question.answeredBy.push(userNickname)
+	answerCurrentQuestion (userNickname) {
+		this.gameStatus.currentQuestion.answeredBy.push(userNickname)
+		const answersLength = this.gameStatus.currentQuestion.answeredBy.length
 
-		if (question.answeredBy.length === this.users.length) {
-			question.resolved = true
+		if (answersLength === this.users.length) {
+			this.gameStatus.currentQuestion.resolved = true
 		}
 
-		return question
+		return this.gameStatus.currentQuestion
 	}
 }
