@@ -146,6 +146,21 @@ app.get("/game/:gameCode", (req, res) => {
 	res.status(200).send({ game })
 })
 
+app.get("/game/:gameCode/users", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const { users } = game
+
+	res.status(200).send({ users })
+})
+
 app.listen(LOCAL_PORT, () => {
 	console.log(`Listening at http://localhost:${LOCAL_PORT}`)
 })
