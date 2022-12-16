@@ -207,6 +207,22 @@ app.get("/game/:gameCode/current/question/resolved", (req, res) => {
 	res.status(200).send({ isQuestionResolved, isGameOver })
 })
 
+app.get("/game/:gameCode/previousQuestionResults", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const answeredQuestionsSize = game.answeredQuestions.length
+	const previousQuestionResults = game.answeredQuestions[answeredQuestionsSize - 1].answeredBy
+
+	res.status(200).send({ previousQuestionResults })
+})
+
 app.listen(LOCAL_PORT, () => {
 	console.log(`Listening at http://localhost:${LOCAL_PORT}`)
 })
