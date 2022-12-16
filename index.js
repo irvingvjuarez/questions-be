@@ -107,12 +107,9 @@ app.post("/user/:gameCode/join", (req, res) => {
 		return
 	}
 
-	const { isParamMissing: isGameOff } = getRequestParam(game.started, res, "Game has not started yet. It cannot add users.", 500)
-	if (isGameOff) return
-
 	game.addUser(user)
 	const gameQuestions = game.questions
-	const gameUsers = game.users
+	const gameUsers = game.users.filter(user => user.nickname != nickname)
 
 	res.status(200).send({ gameQuestions, gameUsers })
 })
@@ -173,6 +170,22 @@ app.get("/game/:gameCode/users", (req, res) => {
 	const { users } = game
 
 	res.status(200).send({ users })
+})
+
+app.get("/game/:gameCode/current/question/resolved", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const isQuestionResolved = !game.status.counterActive
+	const isGameOver = game.gameOver
+
+	res.status(200).send({ isQuestionResolved, isGameOver })
 })
 
 app.listen(LOCAL_PORT, () => {

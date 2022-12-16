@@ -1,4 +1,4 @@
-import { TIME_TO_ANSWER } from "../globals";
+import { TIME_TO_ANSWER } from "../globals.js";
 
 export class Game {
 	constructor () {
@@ -8,8 +8,9 @@ export class Game {
 		this.users = []
 		this.status = {
 			currentQuestion: null,
-			counterActive: true
+			counterActive: null
 		}
+		this.answeredQuestions = []
 	}
 
 	getCode () {
@@ -32,6 +33,7 @@ export class Game {
 		if (!this.status.currentQuestion) {
 			this.gameOver()
 		} else {
+			this.status.counterActive = true
 			setTimeout(() => {
 				this.finishCurrentQuestion()
 			}, TIME_TO_ANSWER)
@@ -40,6 +42,12 @@ export class Game {
 
 	finishCurrentQuestion () {
 		this.status.counterActive = false;
+		this.status.currentQuestion.resolved = true
+
+		this.answeredQuestions.push(this.status.currentQuestion)
+		this.status.currentQuestion = null
+
+		// console.log(this.status)
 	}
 
 	gameOver () {
