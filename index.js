@@ -154,6 +154,11 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 		return
 	}
 
+	if (!game.status.counterActive) {
+		res.status(403).send("Answering is not available anymore.")
+		return
+	}
+
 	const user = game.users.find(user => user.nickname == nickname)
 	if (!user) {
 		res.status(404).send(`User ${nickname} Not Found in game ${gameCode}`)
