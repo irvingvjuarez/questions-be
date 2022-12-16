@@ -1,8 +1,8 @@
 import express from "express"
 import { Game } from "./controllers/game.js"
+import { User } from "./controllers/user.js"
 import { LOCAL_PORT } from "./globals.js"
 import { getGame } from "./services/getGame.js"
-import { getGameCode } from "./services/getGameCode.js"
 import { getRequestParam } from "./services/getRequestParam.js"
 
 const GAMES = []
@@ -39,13 +39,11 @@ app.post("/game/:gameCode/delete", (req, res) => {
 })
 
 app.post("/game/:gameCode/questions", (req, res) => {
-	const { body } = req
-	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
-	if (invalidGameCode || !body) {
-		const currentErrorMessage = body ? invalidGameCodeMessage : "Body not sent in the request"
-		res.status(status).send(currentErrorMessage)
-		return
-	}
+	const { param: questions, isParamMissing: questionsMissing } = getRequestParam(req.body.questions, res, "Questions not sent in the body request")
+	if (questionsMissing) return
+
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
 
 	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
 	if (gameNotFound) {
@@ -53,16 +51,13 @@ app.post("/game/:gameCode/questions", (req, res) => {
 		return
 	}
 
-	game.addQuestions(body.questions)
+	game.addQuestions(questions)
 	res.status(200).send({ game })
 })
 
 app.post("/game/:gameCode/start", (req, res) => {
-	const {gameCode, invalidGameCode, status, invalidGameCodeMessage} = getGameCode(req);
-	if (invalidGameCode) {
-		res.status(status).send(invalidGameCodeMessage)
-		return
-	}
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
 
 	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
 	if (gameNotFound) {
@@ -70,17 +65,38 @@ app.post("/game/:gameCode/start", (req, res) => {
 		return
 	}
 
-	if (!game.questions) {
-		res.status(500).send("No questions added. Game cannot start")
-		return
-	}
+	const { isParamMissing: questionsMissing } = getRequestParam(game.questions, res, "No questions added. Game cannot start", 500)
+	if (questionsMissing) return
 
 	game.toggleStart();
 	res.status(200).send({ game })
 })
 
 // USER POST endpoints
-app.post("/user/:gameCode/join")
+app.post("/user/:gameCode/join", (req, res) => {
+	const { param: nickname, isParamMissing: isNicknameMissing } = getRequestParam(req.body.nickname, res, "Nickname not sent in the body request")
+	if (isNicknameMissing) return
+
+	const user = new User(nickname)
+
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const { isParamMissing: isGameOff } = getRequestParam(game.started, res, "Game has not started yet. It cannot add users.", 500)
+	if (isGameOff) return
+
+	game.addUser(user)
+	const gameQuestions = game.questions
+	const gameUsers = game.users
+
+	res.status(200).send({ gameQuestions, gameUsers })
+})
 
 app.listen(LOCAL_PORT, () => {
 	console.log(`Listening at http://localhost:${LOCAL_PORT}`)
