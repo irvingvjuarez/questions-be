@@ -67,6 +67,12 @@ app.post("/game/:gameCode/start", (req, res) => {
 		return
 	}
 
+	const { users } = game
+	if (users.length === 0) {
+		res.status(428).send("Game cannot be started due to lack of users")
+		return
+	}
+
 	const { isParamMissing: questionsMissing } = getRequestParam(game.questions, res, "No questions added. Game cannot start", 500)
 	if (questionsMissing) return
 
