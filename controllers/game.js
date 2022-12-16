@@ -6,7 +6,7 @@ export class Game {
 		this.started = false;
 		this.gameOver = false;
 		this.users = []
-		this.gameStatus = {
+		this.status = {
 			currentQuestion: null,
 			counterActive: true
 		}
@@ -27,9 +27,9 @@ export class Game {
 	}
 
 	startQuestionCounter() {
-		this.gameStatus.currentQuestion = this.questions.splice(0, 1);
+		this.status.currentQuestion = this.questions.splice(0, 1);
 
-		if (!this.gameStatus.currentQuestion) {
+		if (!this.status.currentQuestion) {
 			this.gameOver()
 		} else {
 			setTimeout(() => {
@@ -39,7 +39,7 @@ export class Game {
 	}
 
 	finishCurrentQuestion () {
-		this.gameStatus.counterActive = false;
+		this.status.counterActive = false;
 	}
 
 	gameOver () {
@@ -51,13 +51,13 @@ export class Game {
 	}
 
 	answerCurrentQuestion (userNickname) {
-		this.gameStatus.currentQuestion.answeredBy.push(userNickname)
-		const answersLength = this.gameStatus.currentQuestion.answeredBy.length
+		this.status.currentQuestion.answeredBy.push(userNickname)
+		const answersLength = this.status.currentQuestion.answeredBy.length
 
 		if (answersLength === this.users.length) {
-			this.gameStatus.currentQuestion.resolved = true
+			this.status.currentQuestion.resolved = true
 		}
 
-		return this.gameStatus.currentQuestion
+		return this.status.currentQuestion
 	}
 }
