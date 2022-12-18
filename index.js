@@ -165,6 +165,12 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 		return
 	}
 
+	const userAlreadyAnswered = game.status.currentQuestion.answeredBy.find(answer => answer.userNickname == nickname)
+	if (userAlreadyAnswered) {
+		res.status(403).send(`User ${nickname} cannot answer the same question twice.`)
+		return
+	}
+
 	const answeredQuestion = answerCurrentQuestion({game, nickname, user, answer})
 
 	res.status(200).send({ answeredQuestion })
