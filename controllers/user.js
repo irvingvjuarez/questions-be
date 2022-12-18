@@ -7,7 +7,9 @@ export class User {
 		}
 	}
 
-	answerCurrentQuestion (answer) {
-		this.gameHistorial.answers.push(answer)
+	answerCurrentQuestion (answerInfo) {
+		const { currentQuestionId, isUserCorrect } = answerInfo
+
+		this.gameHistorial.answers.push({ currentQuestionId, isUserCorrect })
 	}
 }

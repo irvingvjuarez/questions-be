@@ -60,9 +60,12 @@ export class Game {
 		this.users.push(user)
 	}
 
-	answerCurrentQuestion (userNickname) {
+	answerCurrentQuestion (answerInfo) {
+		const { nickname: userNickname, isUserCorrect } = answerInfo
 		this.currentScore -= 1
-		const answer = { score: this.currentScore, userNickname }
+
+		const userScore = isUserCorrect ? this.currentScore : 0;
+		const answer = { userScore, userNickname }
 		this.status.currentQuestion.answeredBy.push(answer)
 
 		const answersLength = this.status.currentQuestion.answeredBy.length

@@ -167,8 +167,6 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 
 	const answeredQuestion = answerCurrentQuestion({game, nickname, user, answer})
 
-	console.log(answeredQuestion.answeredBy)
-
 	res.status(200).send({ answeredQuestion })
 })
 
