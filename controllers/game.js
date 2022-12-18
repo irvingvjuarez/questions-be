@@ -23,11 +23,13 @@ export class Game {
 
 	startGame () {
 		this.started = true
+		this.maxUserScore = this.users.length + 1
 
 		this.startQuestionCounter()
 	}
 
 	startQuestionCounter() {
+		this.currentScore = this.maxUserScore
 		const splicedQuestion = this.questions.splice(0, 1)
 		this.status.currentQuestion = splicedQuestion[0];
 
@@ -59,7 +61,10 @@ export class Game {
 	}
 
 	answerCurrentQuestion (userNickname) {
-		this.status.currentQuestion.answeredBy.push(userNickname)
+		this.currentScore -= 1
+		const answer = { score: this.currentScore, userNickname }
+		this.status.currentQuestion.answeredBy.push(answer)
+
 		const answersLength = this.status.currentQuestion.answeredBy.length
 
 		if (answersLength === this.users.length) {
