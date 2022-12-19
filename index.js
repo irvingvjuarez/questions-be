@@ -239,6 +239,49 @@ app.get("/game/:gameCode/previousQuestionResults", (req, res) => {
 	res.status(200).send({ previousQuestionResults })
 })
 
+app.get("/game/:gameCode/gameResults", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const isGameUnfinished = !game.gameOver
+	if (isGameUnfinished) {
+		res.status(403).send("Game has not finished yet. Action forbbiden.")
+		return
+	}
+
+	const totalScore = {}
+	let sortedScore = []
+
+	game.users.forEach(user => totalScore[user.nickname] = 0)
+
+	game.answeredQuestions.forEach(question => {
+		question.answeredBy.forEach(({userScore, userNickname}) => {
+			totalScore[userNickname] += userScore
+		})
+	})
+
+	for (let key of Object.keys(totalScore)) {
+		const userScore = { user: key, score: totalScore[key] }
+		sortedScore.push(userScore)
+	}
+
+	sortedScore = sortedScore.sort((a, b) => {
+		let order = 0;
+		if (a.score < b.score) order = -1
+		if (a.score > b.score) order = 1
+
+		return order
+	})
+
+	res.status(200).send({ totalScore, sortedScore })
+})
+
 app.listen(LOCAL_PORT, () => {
 	console.log(`Listening at http://localhost:${LOCAL_PORT}`)
 })
