@@ -298,8 +298,8 @@ app.get("/user/:gameCode/current/question/status", (req, res) => {
 		return
 	}
 
-	const { status } = game
-	res.status(200).send({ status })
+	const { status, gameOver: isGameOver } = game
+	res.status(200).send({ status, isGameOver })
 })
 
 
