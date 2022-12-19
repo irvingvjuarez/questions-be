@@ -14,14 +14,14 @@
 - /game/:gameId/users: Returns the list with all the users joined into the game
 - /game/:gameId/current/question/resolved: Returns a boolean indicating if the question was answered by all the game members
 - /game/:gameId/previousQuestionResults: Returns the users' who answered the question
-
-
-# Game related GET endpoints
 - /game/:gameId/gameResults: Returns the result of the game as a whole, listing the first, second and third place
+# User related GET endpoints
+- /user/:gameId/getUsers: Returns all the users joining the game room and a boolean indicating if the game has already started. It was done in the '/game/:gameCode/users' endpoint
+- "/user/:gameId/current/question/status": Returns a boolean indicating if the time of an specific question is over and the right answer to the question
+
+
 
 
 # User related GET endpoints
-- /user/:gameId/getUsers: Returns all the users joining the game room and a boolean indicating if the game has already started
-- /user/:gameId/question/:questionId/status: Returns a boolean indicating if the time of an specific question is over and the right answer to the question
 - /user/:gameId/status: Returns a boolean telling if the game is on again and what's the next question to answer or if the questionnaire is finished
 - /user/:gameId/results: Returns if the user was among the first places
