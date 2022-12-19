@@ -202,9 +202,9 @@ app.get("/game/:gameCode/users", (req, res) => {
 		return
 	}
 
-	const { users } = game
+	const { users, started: gameStarted } = game
 
-	res.status(200).send({ users })
+	res.status(200).send({ users, gameStarted })
 })
 
 app.get("/game/:gameCode/current/question/resolved", (req, res) => {
