@@ -234,9 +234,13 @@ app.get("/game/:gameCode/previousQuestionResults", (req, res) => {
 	}
 
 	const answeredQuestionsSize = game.answeredQuestions.length
-	const previousQuestionResults = game.answeredQuestions[answeredQuestionsSize - 1].answeredBy
 
-	res.status(200).send({ previousQuestionResults })
+	try {
+		const previousQuestionResults = game.answeredQuestions[answeredQuestionsSize - 1].answeredBy
+		res.status(200).send({ previousQuestionResults })
+	} catch (err) {
+		res.status(404).send("Previous question not found. Probably there is no available yet.")
+	}
 })
 
 app.get("/game/:gameCode/gameResults", (req, res) => {
