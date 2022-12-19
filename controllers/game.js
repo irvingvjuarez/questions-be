@@ -76,4 +76,34 @@ export class Game {
 
 		return this.status.currentQuestion
 	}
+
+	addFinalScores () {
+		const totalScore = {}
+		let sortedScore = []
+
+		this.users.forEach(user => totalScore[user.nickname] = 0)
+
+		this.answeredQuestions.forEach(question => {
+			question.answeredBy.forEach(({userScore, userNickname}) => {
+				totalScore[userNickname] += userScore
+			})
+		})
+
+		for (let key of Object.keys(totalScore)) {
+			const userScore = { user: key, score: totalScore[key] }
+			sortedScore.push(userScore)
+		}
+
+		sortedScore = sortedScore.sort((a, b) => {
+			let order = 0;
+			if (a.score < b.score) order = -1
+			if (a.score > b.score) order = 1
+
+			return order
+		})
+
+		this.finalScore = { totalScore, sortedScore }
+
+		return this.finalScore
+	}
 }
