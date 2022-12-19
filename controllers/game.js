@@ -11,6 +11,7 @@ export class Game {
 			counterActive: null
 		}
 		this.answeredQuestions = []
+		this.totalScore = {}
 	}
 
 	getCode () {
@@ -24,6 +25,8 @@ export class Game {
 	startGame () {
 		this.started = true
 		this.maxUserScore = this.users.length + 1
+
+		this.users.forEach(user => this.totalScore[user.nickname] = 0)
 
 		this.startQuestionCounter()
 	}
@@ -77,33 +80,28 @@ export class Game {
 		return this.status.currentQuestion
 	}
 
-	addFinalScores () {
-		const totalScore = {}
+	getScores () {
 		let sortedScore = []
-
-		this.users.forEach(user => totalScore[user.nickname] = 0)
 
 		this.answeredQuestions.forEach(question => {
 			question.answeredBy.forEach(({userScore, userNickname}) => {
-				totalScore[userNickname] += userScore
+				this.totalScore[userNickname] += userScore
 			})
 		})
 
-		for (let key of Object.keys(totalScore)) {
-			const userScore = { user: key, score: totalScore[key] }
+		for (let key of Object.keys(this.totalScore)) {
+			const userScore = { user: key, score: this.totalScore[key] }
 			sortedScore.push(userScore)
 		}
 
 		sortedScore = sortedScore.sort((a, b) => {
 			let order = 0;
-			if (a.score < b.score) order = -1
-			if (a.score > b.score) order = 1
+			if (a.score < b.score) order = 1
+			if (a.score > b.score) order = -1
 
 			return order
 		})
 
-		this.finalScore = { totalScore, sortedScore }
-
-		return this.finalScore
+		return { totalScore: this.totalScore, sortedScore }
 	}
 }

@@ -243,7 +243,7 @@ app.get("/game/:gameCode/previousQuestionResults", (req, res) => {
 	}
 })
 
-app.get("/game/:gameCode/gameResults", (req, res) => {
+app.get("/game/:gameCode/current/score", (req, res) => {
 	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
 	if (isGameCodeMissing) return
 
@@ -253,13 +253,13 @@ app.get("/game/:gameCode/gameResults", (req, res) => {
 		return
 	}
 
-	const isGameUnfinished = !game.gameOver
-	if (isGameUnfinished) {
-		res.status(403).send("Game has not finished yet. Action forbbiden.")
-		return
-	}
+	// const isGameUnfinished = !game.gameOver
+	// if (isGameUnfinished) {
+	// 	res.status(403).send("Game has not finished yet. Action forbbiden.")
+	// 	return
+	// }
 
-	const { totalScore, sortedScore } = game.addFinalScores()
+	const { totalScore, sortedScore } = game.getScores()
 	res.status(200).send({ totalScore, sortedScore })
 })
 
