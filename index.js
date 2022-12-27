@@ -15,11 +15,16 @@ app.use(cors())
 
 
 // GAME POST endpoints
-app.post("/game/create", (_req, res) => {
+app.post("/game/create", (req, res) => {
+	const { param: questions, isParamMissing: questionsMissing } = getRequestParam(req.body.questions, res, "Questions not sent in the body request")
+	if (questionsMissing) return
+
 	try {
 		const game = new Game()
-		const gameCode = game.getCode()
 		GAMES.push(game)
+
+		const gameCode = game.getCode()
+		game.addQuestions(questions)
 
 		res.status(200).send({ gameCode })
 	} catch(err) {
@@ -180,6 +185,10 @@ app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
 
 
 // GAME GET endpoints
+app.get("/games", (_req, res) => {
+	res.status(200).send({ games: GAMES })
+})
+
 app.get("/game/:gameCode", (req, res) => {
 	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
 	if (isGameCodeMissing) return
