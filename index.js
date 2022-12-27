@@ -1,4 +1,5 @@
 import express from "express"
+import cors from "cors"
 import { Game } from "./controllers/game.js"
 import { User } from "./controllers/user.js"
 import { LOCAL_PORT } from "./globals.js"
@@ -10,7 +11,7 @@ const GAMES = []
 const app = express()
 
 app.use(express.json())
-
+app.use(cors())
 
 
 // GAME POST endpoints
