@@ -139,7 +139,16 @@ app.post("/user/:gameCode/join", (req, res) => {
 
 	game.addUser(user)
 	const gameQuestions = game.questions
-	const gameUsers = game.users.filter(user => user.nickname != nickname)
+	const gameUsers = game.users.map(user => {
+		if (user.nickname == nickname) {
+			return {
+				...user,
+				nickname: `${user.nickname} (You)`
+			}
+		}
+
+		return user
+	})
 
 	res.status(200).send({ gameQuestions, gameUsers, gameCode })
 })
