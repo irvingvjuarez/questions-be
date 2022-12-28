@@ -141,7 +141,7 @@ app.post("/user/:gameCode/join", (req, res) => {
 	const gameQuestions = game.questions
 	const gameUsers = game.users.filter(user => user.nickname != nickname)
 
-	res.status(200).send({ gameQuestions, gameUsers })
+	res.status(200).send({ gameQuestions, gameUsers, gameCode })
 })
 
 app.post("/user/:userNickname/answer/:gameCode", (req, res) => {
