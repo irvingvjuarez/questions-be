@@ -7,7 +7,7 @@ import { answerCurrentQuestion } from "./services/answerCurrentQuestion.js"
 import { getGame } from "./services/getGame.js"
 import { getRequestParam } from "./services/getRequestParam.js"
 
-const GAMES = []
+let GAMES = []
 const app = express()
 
 app.use(express.json())
@@ -110,6 +110,12 @@ app.post("/game/:gameCode/next/question/start", (req, res) => {
 	game.startQuestionCounter()
 
 	res.status(200).send({ gameStatus: game.status, isGameOver: game.gameOver })
+})
+
+app.post("/game/remove/all", (req, res) => {
+	GAMES = [];
+
+	res.status(200).send({ GAMES })
 })
 
 
