@@ -304,16 +304,30 @@ app.get("/game/:gameCode/current/score", (req, res) => {
 		return
 	}
 
-	// const isGameUnfinished = !game.gameOver
-	// if (isGameUnfinished) {
-	// 	res.status(403).send("Game has not finished yet. Action forbbiden.")
-	// 	return
-	// }
-
 	const { totalScore, sortedScore } = game.getScores()
 	res.status(200).send({ totalScore, sortedScore })
 })
 
+app.get("/game/:gameCode/current/question/full/status", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const { status, gameOver: isGameOver, started } = game
+
+	if (!started) {
+		res.status(401).send("The game has not started yet. Request unauthorized.");
+		return
+	}
+
+	const { totalScore, sortedScore } = game.getScores()
+	res.status(200).send({ status, isGameOver, sortedScore })
+})
 
 // USER GET endpoints
 app.get("/user/:gameCode/current/question/status", (req, res) => {

@@ -83,6 +83,18 @@ export class Game {
 	getScores () {
 		let sortedScore = []
 
+		if (this.answeredQuestions.length === 0) {
+			const response = this.users.map(user => ({
+				...user,
+				score: 0
+			}))
+
+			return {
+				totalScore: response,
+				sortedScore: response
+			}
+		}
+
 		this.answeredQuestions.forEach(question => {
 			question.answeredBy.forEach(({userScore, userNickname}) => {
 				this.totalScore[userNickname] += userScore
