@@ -226,6 +226,38 @@ app.get("/game/:gameCode/users", (req, res) => {
 	res.status(200).send({ users, gameStarted })
 })
 
+app.get("/game/:gameCode/users/:nickname", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { param: nickname, isParamMissing: isNicknameMissing } = getRequestParam(req.params.nickname, res, "User nickname not found")
+	if (isNicknameMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const userIndex = game.users.findIndex(user => user.nickname == nickname)
+	if (userIndex < 0) {
+		res.status(404).send(`User ${nickname} not found in the game`)
+		return
+	}
+
+	const { started: gameStarted } = game
+	const users = [...game.users]
+
+	const user = users.splice(userIndex, 1)[0];
+
+	users.unshift({
+		...user,
+		nickname: `${user.nickname} (You)`
+	})
+
+	res.status(200).send({ users, gameStarted })
+})
+
 app.get("/game/:gameCode/current/question/resolved", (req, res) => {
 	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
 	if (isGameCodeMissing) return
