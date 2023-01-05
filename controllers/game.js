@@ -102,7 +102,7 @@ export class Game {
 		})
 
 		for (let key of Object.keys(this.totalScore)) {
-			const userScore = { user: key, score: this.totalScore[key] }
+			const userScore = { nickname: key, score: this.totalScore[key] }
 			sortedScore.push(userScore)
 		}
 
