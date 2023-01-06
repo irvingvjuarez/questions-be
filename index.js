@@ -253,6 +253,7 @@ app.get("/game/:gameCode/users/:nickname", (req, res) => {
 
 	const { started: gameStarted } = game
 	const users = [...game.users]
+	const status = game.status
 
 	const user = users.splice(userIndex, 1)[0];
 
@@ -261,7 +262,7 @@ app.get("/game/:gameCode/users/:nickname", (req, res) => {
 		nickname: `${user.nickname} (You)`
 	})
 
-	res.status(200).send({ users, gameStarted })
+	res.status(200).send({ users, gameStarted, status })
 })
 
 app.get("/game/:gameCode/current/question/resolved", (req, res) => {
