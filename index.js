@@ -229,7 +229,7 @@ app.get("/game/:gameCode/users", (req, res) => {
 
 	const { users, started: gameStarted } = game
 
-	res.status(200).send({ users, gameStarted })
+	res.status(200).send({ users, gameStarted, status: game.status })
 })
 
 app.get("/game/:gameCode/users/:nickname", (req, res) => {
