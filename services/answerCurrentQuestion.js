@@ -15,5 +15,8 @@ export const answerCurrentQuestion = ({game, nickname, user, answer}) => {
 	// console.log(game.status.currentQuestion.answeredBy)
 	// console.log(user.gameHistorial.answers)
 
-	return answeredQuestion
+	return {
+		...answeredQuestion,
+		isUserCorrect
+	}
 }
