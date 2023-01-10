@@ -40,6 +40,7 @@ export class Game {
 			this.gameOver = true
 		} else {
 			this.status.counterActive = true
+
 			setTimeout(() => {
 				this.finishCurrentQuestion()
 			}, TIME_TO_ANSWER)
@@ -47,12 +48,13 @@ export class Game {
 	}
 
 	finishCurrentQuestion () {
-		this.status.counterActive = false;
-		this.status.currentQuestion.resolved = true
+		if(this.status.counterActive) {
+			this.status.counterActive = false;
+			this.status.currentQuestion.resolved = true
 
-		this.answeredQuestions.push(this.status.currentQuestion)
-		this.status.currentQuestion = null
-
+			this.answeredQuestions.push(this.status.currentQuestion)
+			this.status.currentQuestion = null
+		}
 	}
 
 	gameOver () {
@@ -74,7 +76,7 @@ export class Game {
 		const answersLength = this.status.currentQuestion.answeredBy.length
 
 		if (answersLength === this.users.length) {
-			this.status.currentQuestion.resolved = true
+			this.finishCurrentQuestion()
 		}
 
 		return this.status.currentQuestion
