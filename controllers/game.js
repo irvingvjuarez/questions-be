@@ -71,9 +71,7 @@ export class Game {
 
 		const userScore = isUserCorrect ? this.currentScore : 0;
 		const answer = { userScore, userNickname }
-		this.status.currentQuestion.answeredBy.push(answer)
-
-		const answersLength = this.status.currentQuestion.answeredBy.length
+		const answersLength = this.status.currentQuestion.answeredBy.push(answer)
 
 		if (answersLength === this.users.length) {
 			this.finishCurrentQuestion()
