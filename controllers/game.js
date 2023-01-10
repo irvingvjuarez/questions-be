@@ -74,7 +74,7 @@ export class Game {
 		const answersLength = this.status.currentQuestion.answeredBy.push(answer)
 
 		if (answersLength === this.users.length) {
-			this.finishCurrentQuestion()
+			setTimeout(() => this.finishCurrentQuestion(), 1000)
 		}
 
 		return this.status.currentQuestion
