@@ -25,8 +25,6 @@ export class Game {
 		this.started = true
 		this.maxUserScore = this.users.length + 1
 
-		this.users.forEach(user => this.totalScore[user.nickname] = 0)
-
 		this.startQuestionCounter()
 	}
 
@@ -66,7 +64,10 @@ export class Game {
 
 	answerCurrentQuestion (answerInfo) {
 		const { nickname: userNickname, isUserCorrect, currentUserScore } = answerInfo
-		this.currentScore -= 1
+
+		if (isUserCorrect) {
+			this.currentScore -= 1
+		}
 
 		const userScore = isUserCorrect ? (currentUserScore + this.currentScore) : currentUserScore;
 		const answer = { userScore, userNickname }
