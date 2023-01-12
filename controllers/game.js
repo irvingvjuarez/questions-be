@@ -11,7 +11,6 @@ export class Game {
 			counterActive: null
 		}
 		this.answeredQuestions = []
-		this.totalScore = {}
 	}
 
 	getCode () {
@@ -84,32 +83,12 @@ export class Game {
 	}
 
 	getScores () {
-		let sortedScore = []
+		const totalScore = this.users.map(({nickname, score}) => ({
+			nickname,
+			score
+		}))
 
-		if (this.answeredQuestions.length === 0) {
-			const response = this.users.map(user => ({
-				...user,
-				score: 0
-			}))
-
-			return {
-				totalScore: response,
-				sortedScore: response
-			}
-		}
-
-		this.answeredQuestions.forEach(question => {
-			question.answeredBy.forEach(({userScore, userNickname}) => {
-				this.totalScore[userNickname] += userScore
-			})
-		})
-
-		for (let key of Object.keys(this.totalScore)) {
-			const userScore = { nickname: key, score: this.totalScore[key] }
-			sortedScore.push(userScore)
-		}
-
-		sortedScore = sortedScore.sort((a, b) => {
+		const sortedScore = totalScore.sort((a, b) => {
 			let order = 0;
 			if (a.score < b.score) order = 1
 			if (a.score > b.score) order = -1
@@ -117,6 +96,6 @@ export class Game {
 			return order
 		})
 
-		return { totalScore: this.totalScore, sortedScore }
+		return { totalScore, sortedScore }
 	}
 }
