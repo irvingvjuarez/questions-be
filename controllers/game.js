@@ -66,10 +66,10 @@ export class Game {
 	}
 
 	answerCurrentQuestion (answerInfo) {
-		const { nickname: userNickname, isUserCorrect } = answerInfo
+		const { nickname: userNickname, isUserCorrect, currentUserScore } = answerInfo
 		this.currentScore -= 1
 
-		const userScore = isUserCorrect ? this.currentScore : 0;
+		const userScore = isUserCorrect ? (currentUserScore + this.currentScore) : currentUserScore;
 		const answer = { userScore, userNickname }
 		const answersLength = this.status.currentQuestion.answeredBy.push(answer)
 
@@ -77,7 +77,10 @@ export class Game {
 			setTimeout(() => this.finishCurrentQuestion(), 1000)
 		}
 
-		return this.status.currentQuestion
+		return {
+			currentQuestion: this.status.currentQuestion,
+			userScore
+		}
 	}
 
 	getScores () {

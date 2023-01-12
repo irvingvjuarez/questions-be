@@ -3,13 +3,14 @@ export const answerCurrentQuestion = ({game, nickname, user, answer}) => {
 	const currentQuestionId = game.status.currentQuestion.id
 	const correctOption = game.status.currentQuestion.correctAnswer
 	const isUserCorrect = optionChosen == correctOption
+	const currentUserScore = user.score
 
 	const actualAnswer = {
-		nickname, currentQuestionId, isUserCorrect
+		nickname, currentQuestionId, isUserCorrect, currentUserScore
 	}
 
-	const answeredQuestion = game.answerCurrentQuestion(actualAnswer)
-	user.answerCurrentQuestion(actualAnswer)
+	const {answeredQuestion, userScore} = game.answerCurrentQuestion(actualAnswer)
+	user.answerCurrentQuestion(actualAnswer, userScore)
 
 	// TODO: prove what happens when the users answers wrongly
 	// console.log(game.status.currentQuestion.answeredBy)

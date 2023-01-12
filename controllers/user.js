@@ -5,11 +5,13 @@ export class User {
 			gameCode,
 			answers: []
 		}
+		this.score = 0
 	}
 
-	answerCurrentQuestion (answerInfo) {
+	answerCurrentQuestion (answerInfo, userScore) {
 		const { currentQuestionId, isUserCorrect } = answerInfo
 
+		this.score = userScore
 		this.gameHistorial.answers.push({ currentQuestionId, isUserCorrect })
 	}
 }
