@@ -9,7 +9,7 @@ export const answerCurrentQuestion = ({game, nickname, user, answer}) => {
 		nickname, currentQuestionId, isUserCorrect, currentUserScore
 	}
 
-	const {answeredQuestion, userScore} = game.answerCurrentQuestion(actualAnswer)
+	const {currentQuestion: answeredQuestion, userScore} = game.answerCurrentQuestion(actualAnswer)
 	user.answerCurrentQuestion(actualAnswer, userScore)
 
 	// TODO: prove what happens when the users answers wrongly
