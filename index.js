@@ -2,7 +2,7 @@ import express from "express"
 import cors from "cors"
 import { Game } from "./controllers/game.js"
 import { User } from "./controllers/user.js"
-import { LOCAL_PORT } from "./globals.js"
+import { AUTO_DESTROYING_TIMESPAN, LOCAL_PORT } from "./globals.js"
 import { answerCurrentQuestion } from "./services/answerCurrentQuestion.js"
 import { getGame } from "./services/getGame.js"
 import { getRequestParam } from "./services/getRequestParam.js"
@@ -25,6 +25,13 @@ app.post("/game/create", (req, res) => {
 
 		const gameCode = game.getCode()
 		game.addQuestions(questions)
+
+		setTimeout(() => {
+			const { gameIndex, gameNotFound } = getGame(GAMES, gameCode)
+			if (!gameNotFound) {
+				GAMES.splice(gameIndex, 1)
+			}
+		}, AUTO_DESTROYING_TIMESPAN)
 
 		res.status(200).send({ gameCode })
 	} catch(err) {
@@ -112,7 +119,7 @@ app.post("/game/:gameCode/next/question/start", (req, res) => {
 	res.status(200).send({ gameStatus: game.status, isGameOver: game.gameOver })
 })
 
-app.post("/game/remove/all", (req, res) => {
+app.post("/game/remove/all", (_req, res) => {
 	GAMES = [];
 
 	res.status(200).send({ GAMES })
