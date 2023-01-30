@@ -117,4 +117,137 @@ router.post("/remove/all", (_req, res) => {
 	res.status(200).send({ GAMES })
 })
 
+// GET SECTION
+router.get("/:gameCode", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	res.status(200).send({ game })
+})
+
+router.get("/:gameCode/users", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const { users, started: gameStarted } = game
+
+	res.status(200).send({ users, gameStarted, status: game.status })
+})
+
+router.get("/:gameCode/users/:nickname", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { param: nickname, isParamMissing: isNicknameMissing } = getRequestParam(req.params.nickname, res, "User nickname not found")
+	if (isNicknameMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const userIndex = game.users.findIndex(user => user.nickname == nickname)
+	if (userIndex < 0) {
+		res.status(404).send(`User ${nickname} not found in the game`)
+		return
+	}
+
+	const { started: gameStarted } = game
+	const users = [...game.users]
+	const status = game.status
+
+	const user = users.splice(userIndex, 1)[0];
+
+	users.unshift({
+		...user,
+		nickname: `${user.nickname} (You)`
+	})
+
+	res.status(200).send({ users, gameStarted, status })
+})
+
+router.get("/:gameCode/current/question/resolved", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const isQuestionResolved = !game.status.counterActive
+	const isGameOver = game.gameOver
+
+	res.status(200).send({ isQuestionResolved, isGameOver })
+})
+
+router.get("/:gameCode/previousQuestionResults", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const answeredQuestionsSize = game.answeredQuestions.length
+
+	try {
+		const previousQuestionResults = game.answeredQuestions[answeredQuestionsSize - 1].answeredBy
+		res.status(200).send({ previousQuestionResults })
+	} catch (err) {
+		res.status(404).send("Previous question not found. Probably there is no available yet.")
+	}
+})
+
+router.get("/:gameCode/current/score", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const { totalScore, sortedScore } = game.getScores()
+	res.status(200).send({ totalScore, sortedScore })
+})
+
+router.get("/:gameCode/current/question/full/status", (req, res) => {
+	const { param: gameCode, isParamMissing: isGameCodeMissing } = getRequestParam(req.params.gameCode, res, "No game code Provided")
+	if (isGameCodeMissing) return
+
+	const { game, gameNotFound, gameStatus, gameMessage } = getGame(GAMES, gameCode)
+	if (gameNotFound) {
+		res.status(gameStatus).send(gameMessage)
+		return
+	}
+
+	const { status, gameOver: isGameOver, started } = game
+
+	if (!started) {
+		res.status(401).send("The game has not started yet. Request unauthorized.");
+		return
+	}
+
+	const { totalScore, sortedScore } = game.getScores()
+	res.status(200).send({ status, isGameOver, sortedScore })
+})
+
 export default router
