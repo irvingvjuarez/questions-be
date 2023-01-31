@@ -1,7 +1,7 @@
 import express from "express"
 import cors from "cors"
 import { GAMES, LOCAL_PORT } from "./globals.js"
-import { routing } from "./routes/index.js"
+import { routing } from "./src/routes/index.js"
 
 const app = express()
 

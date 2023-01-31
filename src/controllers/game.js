@@ -1,4 +1,4 @@
-import { TIME_TO_ANSWER } from "../globals.js";
+import { TIME_TO_ANSWER } from "../../globals.js";
 
 export class Game {
 	constructor () {
