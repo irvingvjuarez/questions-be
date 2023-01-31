@@ -15,12 +15,11 @@ export function createApp() {
 		res.status(200).send({ games: GAMES })
 	})
 
-	// STARTING server
-	app.listen(LOCAL_PORT, () => {
-		console.log(`Listening at http://localhost:${LOCAL_PORT}`)
-	})
-
 	return app
 }
 
-createApp()
+const App = createApp()
+
+// STARTING server
+App.listen(LOCAL_PORT, () => console.log(`Listening at http://localhost:${LOCAL_PORT}`))
+
