@@ -1,6 +1,6 @@
 import express from "express"
 import { Game } from "../controllers/game.js"
-import { AUTO_DESTROYING_TIMESPAN, GAMES } from "../../globals.js"
+import { AUTO_DESTROYING_TIMESPAN, GAMES } from "../globals.js"
 import { getGame } from "../services/getGame.js"
 import { getRequestParam } from "../services/getRequestParam.js"
 

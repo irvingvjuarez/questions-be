@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import { GAMES, LOCAL_PORT } from "./globals.js"
+import { GAMES, LOCAL_PORT } from "./src/globals.js"
 import { routing } from "./src/routes/index.js"
 
 export function createApp() {

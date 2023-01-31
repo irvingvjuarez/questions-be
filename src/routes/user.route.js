@@ -1,6 +1,6 @@
 import express from "express"
 import { User } from "../controllers/user.js"
-import { GAMES } from "../../globals.js"
+import { GAMES } from "../globals.js"
 import { answerCurrentQuestion } from "../services/answerCurrentQuestion.js"
 import { getGame } from "../services/getGame.js"
 import { getRequestParam } from "../services/getRequestParam.js"
