@@ -3,6 +3,8 @@ import cors from "cors"
 import { GAMES, LOCAL_PORT } from "./src/globals.js"
 import { routing } from "./src/routes/index.js"
 
+const port = process.env.PORT || LOCAL_PORT
+
 export function createApp() {
 	const app = express()
 
@@ -21,5 +23,5 @@ export function createApp() {
 const App = createApp()
 
 // STARTING server
-App.listen(LOCAL_PORT, () => console.log(`Listening at http://localhost:${LOCAL_PORT}`))
+App.listen(port, () => console.log(`Listening at http://localhost:${port}`))
 
