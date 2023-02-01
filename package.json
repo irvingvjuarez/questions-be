@@ -30,6 +30,6 @@
     "supertest": "^6.3.3"
   },
 	"engines": {
-		"node": "19"
+		"node": ">=16"
 	}
 }
